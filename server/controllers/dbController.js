@@ -1,19 +1,22 @@
 const db = require('../db/postgresDB');
 
-dbController = {};
+const dbController = {};
 
 dbController.createUser = (req, res, next) => {
-  const { username, password } = req.body;
+  const { username, password, email, downloads } = req.body;
+  const values = [username, password, email, downloads];
   console.log('req.body: ', req.body);
   const text = `
-      INSERT INTO users (username, password, TIMESTAMP)
-      values($1, $2, $3)
+      INSERT INTO users (username, password, email, downloads)
+      values($1, $2, $3, $4)
     `;
-  const values = [username, password, Date.now()];
+
   db.query(text, values)
-    .then(response => console.log(response))
-    .catch(err => console.log(err));
-  return next();
+    .then((response) => {
+      console.log(response);
+      next();
+    })
+    .catch((err) => console.log(err));
 };
 
 module.exports = dbController;
